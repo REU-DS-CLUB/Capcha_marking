@@ -1,0 +1,143 @@
+<!-- This is an HTML document for a Captcha site that allows users to verify that they are human. -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Captcha Site</title>
+    <link rel="stylesheet" type="text/css" href="styles.css"> <!-- Link to external CSS file -->
+  </head>
+  <body onload="getPhoto()"> <!-- Run getPhoto() function on page load -->
+    <form action="https://capchagetter-swocz.run-eu-central1.goorm.app/api/captcha/trasted" method="post">
+        <label>Check correct boxes</label>
+        
+        <div class="grid-container">
+          <img id="captcha-image" style="width: 300px; height: 300px">
+          <!-- This image element will display the Captcha image -->
+          <div class="grid-item"></div> <!-- These divs represent the clickable grid items -->
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+          <div class="grid-item"></div>
+      </div>
+      
+      <br>
+      <input type="submit" value="Submit">
+    </form>
+    
+    <script>
+      const gridItems = document.querySelectorAll(".grid-item"); // Select all grid items
+      let grid = [];
+  
+      gridItems.forEach(item => {
+        item.addEventListener("click", function() { // Add event listener to each grid item
+          if (this.style.backgroundColor === "black") { // If item is black
+            this.style.backgroundColor = "transparent"; // Change it to transparent
+          } else {
+            this.style.backgroundColor = "black"; // Otherwise change it to black
+          }
+        });
+      });
+  
+      function getNewPhoto() { // Get new Captcha image
+          fetch('https://capchagetter-swocz.run-eu-central1.goorm.app/api/captcha/untrasted', {
+            headers: {
+              'secretkey': 'cats'
+            }
+          })
+          .then(response => response.blob()) // Convert response to blob
+          .then(blob => {
+            let objectURL = URL.createObjectURL(blob);
+            document.getElementById('captcha-image').src = objectURL; // Update Captcha image source
+            form.style.display = "block"; // Show form
+          });
+        }
+  
+      function getPhoto() { // Get initial Captcha image
+        console.log('Start getting...')
+        fetch('https://capchagetter-swocz.run-eu-central1.goorm.app/api/captcha/trusted', {
+          headers: {
+            'secretkey': 'cats'
+          }
+        })
+        .then(response => response.blob()) // Convert response to blob
+        .then(blob => {
+            let objectURL = URL.createObjectURL(blob);
+            document.getElementById('captcha-image').src = objectURL; // Update Captcha image source
+        });
+      }
+  
+      let trusted = true;
+      let first = true;
+      
+        document.querySelector("form").addEventListener("submit", function(event) {
+          event.preventDefault();
+
+          let grid = [];
+          gridItems.forEach(item => {
+            let row = [];
+            if (item.style.backgroundColor === "black") {
+              row.push(1);
+            } else {
+              row.push(0);
+            }
+            grid.push(row);
+          });
+
+          
+          let data = {
+            secretkey: 'cats',
+            userAnswer: grid,
+            trusted: trusted
+          };
+          console.log(grid);
+
+          fetch("https://capchagetter-swocz.run-eu-central1.goorm.app/api/captcha/trusted", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+          })
+          .then(response => response.json())
+          .then(result => {
+            console.log(result);
+            if (result.success && first) {
+              gridItems.forEach(item => {
+                item.style.backgroundColor = "transparent" 
+                });
+              getNewPhoto()
+              trusted = false;
+              first = false;
+              
+
+            } else {
+              if (first == false){
+                document.querySelector("form").style.display = "none";
+              }
+              else{
+                getPhoto();
+                gridItems.forEach(item => {
+                item.style.backgroundColor = "transparent" 
+                });
+              }
+            }
+          })
+          .catch(error => {
+            // handle error here
+          });
+          
+        });
+
+      </script>
+  </body>
+</html>
