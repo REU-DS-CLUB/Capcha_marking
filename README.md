@@ -9,5 +9,5 @@
 ###                                                                    Контакты
 
 
-  **VK**: vk.com/societyfk, https://vk.com/id124735331, https://vk.com/vitykos\
+  **VK**: vk.com/societyfk, https://vk.com/id124735331, https://vk.com/vitykos
   
